@@ -1,0 +1,37 @@
+name: Run smokie Workflow
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 */5 * * *'
+
+concurrency:
+  group: smokie-workflow
+  cancel-in-progress: false  # Ensures new runs wait instead of cancelling the current one
+
+jobs:
+  run_smokie_workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+
+      - name: Install required packages
+        run: |
+          pip install telebot flask aiogram pyTelegramBotAPI python-telegram-bot
+          pip install telebot pymongo aiohttp psutil motor pytz
+          
+      - name: unzip files
+        run: |
+          unzip pyarmor_runtime_000000.zip
+
+      - name: Run DARINDA.py
+        run: python3 DARINDA.py
